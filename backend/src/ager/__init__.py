@@ -8,3 +8,5 @@ simuler le monde d'Imperium (villages, troupes, combats, etc.).
 __version__ = "0.1.0-alpha"
 
 __all__ = ["__version__"]
+
+from .app import app  # expose l'app FastAPI: ager.app:app

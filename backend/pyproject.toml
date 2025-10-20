@@ -38,6 +38,8 @@ where = ["src"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -50,9 +52,10 @@ select = [
 ]
 ignore = []
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 "tests/**/*.py" = ["S101"]
+"src/ager/models.py" = ["N815"]  # Allow camelCase for API DTOs (JSON contract)
 
 [tool.black]
 line-length = 100

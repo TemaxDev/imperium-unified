@@ -46,6 +46,11 @@ jobs:
       - name: Run tests with PyTest
         run: pytest --cov=src --cov-report=xml --cov-report=term
 
+      - name: Run contract tests with FileStorageEngine
+        run: |
+          export TEST_ENGINE_IMPL=file
+          pytest tests/ports/ -v
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:

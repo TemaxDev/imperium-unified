@@ -1,0 +1,40 @@
+{
+  "villages": {
+    "1": {
+      "id": 1,
+      "name": "Capitale",
+      "resources": {},
+      "queue": []
+    },
+    "2": {
+      "id": 2,
+      "name": "Avant-Poste",
+      "resources": {},
+      "queue": []
+    }
+  },
+  "resources": {
+    "1": {
+      "wood": 100,
+      "clay": 80,
+      "iron": 90,
+      "crop": 75
+    },
+    "2": {
+      "wood": 60,
+      "clay": 40,
+      "iron": 50,
+      "crop": 45
+    }
+  },
+  "buildQueues": {
+    "1": [
+      {
+        "building": "farm",
+        "level": 2,
+        "queuedAt": "2025-10-21T06:18:09.038807+00:00"
+      }
+    ],
+    "2": []
+  }
+}

@@ -47,18 +47,46 @@ class FileStorageEngine:
     def _load_world(self) -> dict[int, Village]:
         """Charge le monde depuis le fichier JSON.
 
+        Supporte deux formats:
+        1. Format legacy: resources dans chaque village
+        2. Format seed: resources séparées dans data["resources"]
+
         Returns:
             Dictionnaire village_id -> Village
         """
         data = json.loads(self.storage_path.read_text())
         world: dict[int, Village] = {}
+
+        # Charger resources séparées si présentes (format seed)
+        resources_map = data.get("resources", {})
+
         for vid_str, v_data in data.get("villages", {}).items():
             vid = int(vid_str)
+
+            # Priorité: resources dans village, sinon resources séparées, sinon défaut
+            if "resources" in v_data:
+                resources = Resources(**v_data["resources"])
+            elif vid_str in resources_map:
+                resources = Resources(**resources_map[vid_str])
+            else:
+                resources = Resources()
+
+            # Charger queue: priorité buildQueues séparées, sinon queue dans village
+            build_queues = data.get("buildQueues", {})
+            if vid_str in build_queues:
+                # Convertir format buildQueues vers queue simplifiée
+                queue = [
+                    f"{item['building']} -> L{item.get('level', 1)}"
+                    for item in build_queues[vid_str]
+                ]
+            else:
+                queue = v_data.get("queue", [])
+
             world[vid] = Village(
                 id=v_data["id"],
                 name=v_data["name"],
-                resources=Resources(**v_data.get("resources", {})),
-                queue=v_data.get("queue", []),
+                resources=resources,
+                queue=queue,
             )
         return world
 

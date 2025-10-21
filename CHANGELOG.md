@@ -9,15 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **AGER Ports/Adapters Architecture**: Implemented hexagonal architecture with `SimulationEngine` port and `MemoryEngine` adapter for clean separation of concerns
-- **Dependency Injection**: Added `container.py` with `get_engine()` factory function for proper DI pattern
+- **FileStorageEngine**: Persistent adapter using JSON file storage for world state (selectable via `AGER_ENGINE` env var)
+- **Settings Module**: Configuration management with `get_engine_type()` and `get_storage_path()` (env: `AGER_ENGINE`, `AGER_STORAGE_PATH`)
+- **Dependency Injection**: Enhanced `container.py` with dynamic engine selection based on environment configuration
+- **Contract Tests**: 10 implementation-agnostic tests in `tests/ports/` validating `SimulationEngine` interface
 - **DTO Models**: Extracted DTOs (`Village`, `Resources`, `BuildCmd`) into dedicated `models.py` module to resolve circular dependencies
-- **Unit Tests**: Added `test_engine_memory.py` with 3 test cases covering snapshot, get_village, and queue_build operations
+- **Unit Tests**: Added `test_engine_memory.py` (3 tests), `test_file_engine.py` (9 tests), and contract tests (10 tests)
 - **API Error Tests**: Added `test_api_errors.py` covering 404 (village not found) and 422 (invalid command) scenarios
 
 ### Changed
+- **Container**: Refactored to support multiple engine implementations with `_create_engine()` factory and `reset_engine()` for tests
 - **API Rewiring**: Updated `app.py` to use `get_engine()` dependency injection instead of direct state access
 - **Code Quality**: Migrated Ruff configuration to `[tool.ruff.lint]` section (new format)
-- **Test Coverage**: Improved to 95% (65 statements, 3 misses in Protocol interface)
+- **Test Coverage**: Maintained at 95% with 28 tests total
 
 ### Fixed
 - **Circular Import**: Resolved circular dependency between `app.py`, `container.py`, and `memory_engine.py` by extracting DTOs

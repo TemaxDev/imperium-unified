@@ -83,6 +83,11 @@ tmp/
 temp/
 *.tmp
 
+# Database files
+backend/data/*.db
+backend/data/*.db-*
+
 # OS
 Thumbs.db
 .DS_Store
+nul

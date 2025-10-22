@@ -2,15 +2,11 @@
   "villages": {
     "1": {
       "id": 1,
-      "name": "Capitale",
-      "resources": {},
-      "queue": []
+      "name": "Capitale"
     },
     "2": {
       "id": 2,
-      "name": "Avant-Poste",
-      "resources": {},
-      "queue": []
+      "name": "Avant-Poste"
     }
   },
   "resources": {
@@ -32,7 +28,7 @@
       {
         "building": "farm",
         "level": 2,
-        "queuedAt": "2025-10-21T06:18:09.038807+00:00"
+        "queuedAt": "2025-10-21T06:36:03.793500+00:00"
       }
     ],
     "2": []

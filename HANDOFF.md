@@ -3,15 +3,16 @@
 ## Repo & branches
 
 - Repo: https://github.com/TemaxDev/imperium-unified
-- Branch active: feat/A5-2-file-seed-and-validation (Seed & Validation for FileStorageEngine)
+- Branch active: feat/A6-1-sqlite-engine (SQLiteEngine adapter)
 
 ## Environnement
 
 - Python: conda env `imperium312` (3.12)
 - Variables d'environnement:
-  - `AGER_ENGINE`: Type de moteur ("memory" ou "file", défaut: "memory")
+  - `AGER_ENGINE`: Type de moteur ("memory", "file" ou "sql", défaut: "memory")
   - `AGER_STORAGE_PATH`: Chemin du fichier JSON pour FileStorageEngine (défaut: "./data/world.json")
-  - `TEST_ENGINE_IMPL`: Type de moteur pour tests de contrat ("memory" ou "file", défaut: "memory")
+  - `AGER_DB_PATH`: Chemin de la base SQLite pour SQLiteEngine (défaut: "./data/ager.db")
+  - `TEST_ENGINE_IMPL`: Type de moteur pour tests de contrat ("memory", "file" ou "sql", défaut: "memory")
 - Démarrer:
   ```bash
   conda activate imperium312
@@ -21,15 +22,17 @@
   uvicorn ager.app:app --reload --app-dir src
   # Avec file engine
   AGER_ENGINE=file uvicorn ager.app:app --reload --app-dir src
+  # Avec SQL engine
+  AGER_ENGINE=sql uvicorn ager.app:app --reload --app-dir src
   ```
 
 ## État technique
 
 - Backend: FastAPI ok → routes `/health`, `/snapshot`, `/village/{id}`, `/cmd/build`
-- Architecture: Ports/Adapters (SimulationEngine + MemoryEngine + FileStorageEngine)
-- Tests: 37 verts (28 précédents + 9 seed validation), couverture 94%
+- Architecture: Ports/Adapters (SimulationEngine + MemoryEngine + FileStorageEngine + SQLiteEngine)
+- Tests: 45 verts (37 précédents + 8 SQL), couverture 92%
 - Frontend: Vite/React structuré (non branché)
-- CI: backend, frontend, PR checks, CodeQL + contract tests avec FileStorageEngine
+- CI: backend, frontend, PR checks, CodeQL + contract tests avec FileStorageEngine + SQLiteEngine
 
 ## ✅ Mission A4-3 – Adaptateur AGER (COMPLÉTÉE)
 
@@ -90,6 +93,37 @@
 - `AGER_ENGINE=memory` (défaut) → MemoryEngine
 - `AGER_ENGINE=file` → FileStorageEngine
 - `AGER_STORAGE_PATH=./data/world.json` (défaut)
+
+## ✅ Mission A6-1 – SQLiteEngine (COMPLÉTÉE)
+
+**Status:** ✅ Done (PR en cours, branche feat/A6-1-sqlite-engine)
+
+**Livrables:**
+- `backend/src/ager/adapters/sql_engine.py` — SQLiteEngine (persistance SQLite)
+- `backend/src/ager/settings.py` — Ajout AGER_DB_PATH + "sql" à EngineType
+- `backend/src/ager/container.py` — Support du cas "sql"
+- `backend/tests/test_engine_sql.py` — 8 tests unitaires
+- `backend/tests/ports/conftest.py` — Support TEST_ENGINE_IMPL=sql
+
+**Résultats:**
+- ✅ Tests: 45 verts (37 précédents + 8 nouveaux)
+- ✅ Couverture: 92% (> 90%)
+- ✅ Contract tests passent avec memory, file ET sql
+- ✅ MyPy: validé
+- ✅ Ruff/Black: OK
+- ✅ API inchangée
+
+**Configuration:**
+- `AGER_ENGINE=memory` (défaut) → MemoryEngine
+- `AGER_ENGINE=file` → FileStorageEngine
+- `AGER_ENGINE=sql` → SQLiteEngine
+- `AGER_DB_PATH=./data/ager.db` (défaut)
+
+**Schéma SQLite:**
+- Table `villages`: id, name
+- Table `resources`: village_id, wood, clay, iron, crop
+- Table `build_queue`: id, village_id, building, level, queued_at
+- Seed automatique: village 1 "Capitale" avec 800 de chaque ressource
 
 ## ✅ Mission A5-2 – File Storage Seeding & Validation (COMPLÉTÉE)
 

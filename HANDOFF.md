@@ -3,7 +3,7 @@
 ## Repo & branches
 
 - Repo: https://github.com/TemaxDev/imperium-unified
-- Branch active: feat/A6-1-sqlite-engine (SQLiteEngine adapter)
+- Branch active: feat/A6-3-ci (CI Refactor)
 
 ## Environnement
 
@@ -29,10 +29,12 @@
 ## État technique
 
 - Backend: FastAPI ok → routes `/health`, `/snapshot`, `/village/{id}`, `/cmd/build`
-- Architecture: Ports/Adapters (SimulationEngine + MemoryEngine + FileStorageEngine + SQLiteEngine)
-- Tests: 45 verts (37 précédents + 8 SQL), couverture 92%
+- Architecture: Ports/Adapters (SimulationEngine + MemoryEngine + FileStorageEngine + SQLiteEngine avec ORM)
+- ORM: SQLModel (SQLAlchemy 2.0) pour SQLiteEngine
+- Migrations: Système SQL simple avec versioning
+- Tests: 55 verts (45 précédents + 10 ORM/migrations), couverture 93%
 - Frontend: Vite/React structuré (non branché)
-- CI: backend, frontend, PR checks, CodeQL + contract tests avec FileStorageEngine + SQLiteEngine
+- CI: Matrix testing (memory/file/sql) + workflows modernisés (concurrency, timeouts, coverage gate 90%)
 
 ## ✅ Mission A4-3 – Adaptateur AGER (COMPLÉTÉE)
 
@@ -154,6 +156,68 @@
 }
 ```
 
+## ✅ Mission A6-2 – ORM & Migrations (COMPLÉTÉE)
+
+**Status:** ✅ Done (PR en cours, branche feat/A6-2-orm-and-migrations)
+
+**Livrables:**
+- `backend/src/ager/db/models.py` — Modèles ORM SQLModel (Village, Resources, BuildQueue)
+- `backend/src/ager/db/session.py` — Gestion session/engine avec cache par db_path
+- `backend/src/ager/db/migrations/0001_init.sql` — Schéma initial DDL
+- `backend/src/ager/db/migrations/0002_seed.sql` — Seed minimal (village 1)
+- `backend/src/ager/db/migrations/runner.py` — Runner de migrations SQL
+- `backend/src/ager/adapters/sql_engine.py` — Refactored vers ORM (session-based)
+- `backend/tests/test_engine_sql_orm.py` — 7 tests ORM
+- `backend/tests/test_migrations_runner.py` — 3 tests migrations
+- `backend/pyproject.toml` — Ajout dépendance sqlmodel>=0.0.27
+
+**Résultats:**
+- ✅ Tests: 55 verts (45 précédents + 10 nouveaux)
+- ✅ Couverture: 93% (> 90%)
+- ✅ Contract tests A4-4 inchangés (memory/file/sql passent)
+- ✅ MyPy: validé
+- ✅ Ruff/Black: OK
+- ✅ API contrat 100% identique (zéro breaking change)
+
+**Architecture ORM:**
+- SQLModel (basé sur SQLAlchemy 2.0 + Pydantic)
+- Session par db_path (cache d'engines)
+- Migrations SQL versionnées (`schema_migrations` table)
+- Tables: `village`, `resources`, `build_queue`
+
+**Migrations:**
+- `0001_init.sql`: Crée les tables
+- `0002_seed.sql`: Insert village 1 "Capitale"
+- Runner idempotent (skip déjà appliquées)
+- Ordre alphabétique garanti
+
+## ✅ Mission A6-3 – CI Solide (COMPLÉTÉE)
+
+**Status:** ✅ Done (PR en cours, branche feat/A6-3-ci)
+
+**Objectif:** Refactoriser les workflows CI/CD pour robustesse et matrix testing.
+
+**Livrables:**
+- `.github/workflows/backend-ci.yml` — Matrix testing (py3.12 × [memory, file, sql])
+- `.github/workflows/frontend-ci.yml` — Modernisé (Node 20, concurrency, timeouts)
+- `.github/workflows/codeql.yml` — Modernisé (concurrency, timeouts)
+- `.github/workflows/pr-checks.yml` — Modernisé (concurrency, timeouts)
+
+**Résultats:**
+- ✅ Backend CI: Matrix testing sur 3 implémentations (memory, file, sql)
+- ✅ Coverage gate: 90% minimum enforced
+- ✅ Concurrency control: Annulation des jobs obsolètes (cancel-in-progress)
+- ✅ Timeouts: backend 15min, frontend 10min, pr-checks 5min, codeql 20min
+- ✅ Branches: migration master → main
+- ✅ Artefacts: upload coverage par impl pour debug
+- ✅ Contract tests exécutés pour chaque impl (TEST_ENGINE_IMPL)
+
+**Architecture CI:**
+- Backend: ruff → black → mypy → unit tests → contract tests (matrix) → coverage gate
+- Frontend: eslint → prettier → tsc → vitest → build
+- CodeQL: analyse Python + JavaScript (hebdo + push/PR)
+- PR checks: validation conventional commits + naming + merge conflicts
+
 ## Prochaines missions
 
-À définir avec Chef Dev après consolidation et merge des PRs (A4-4, A4-5, A5-2).
+À définir avec Chef Dev après consolidation et merge des PRs.

@@ -82,7 +82,7 @@ def test_tables_exist(tmp_path):
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
     tables = {row[0] for row in cursor.fetchall()}
 
-    assert "villages" in tables
+    assert "village" in tables
     assert "resources" in tables
     assert "build_queue" in tables
 

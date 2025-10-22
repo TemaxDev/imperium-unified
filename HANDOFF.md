@@ -3,7 +3,7 @@
 ## Repo & branches
 
 - Repo: https://github.com/TemaxDev/imperium-unified
-- Branch active: feat/A4-5-file-storage-engine (FileStorageEngine + Contract Tests)
+- Branch active: feat/A5-2-file-seed-and-validation (Seed & Validation for FileStorageEngine)
 
 ## Environnement
 
@@ -27,9 +27,9 @@
 
 - Backend: FastAPI ok → routes `/health`, `/snapshot`, `/village/{id}`, `/cmd/build`
 - Architecture: Ports/Adapters (SimulationEngine + MemoryEngine + FileStorageEngine)
-- Tests: 28 verts (19 anciens + 9 FileStorageEngine), couverture 95%
+- Tests: 37 verts (28 précédents + 9 seed validation), couverture 94%
 - Frontend: Vite/React structuré (non branché)
-- CI: backend, frontend, PR checks, CodeQL
+- CI: backend, frontend, PR checks, CodeQL + contract tests avec FileStorageEngine
 
 ## ✅ Mission A4-3 – Adaptateur AGER (COMPLÉTÉE)
 
@@ -54,16 +54,29 @@
 
 **Architecture:** Ports/Adapters → pas de state global, JSON contract verrouillé.
 
-## ✅ Mission A4-5 – FileStorageEngine (EN COURS)
+## ✅ Mission A4-4 – Contract Tests (COMPLÉTÉE)
 
-**Status:** 🚧 En cours (branche feat/A4-5-file-storage-engine)
+**Status:** ✅ Done (PR #2)
+
+**Livrables:**
+- `backend/tests/ports/conftest.py` — Fixture engine avec TEST_ENGINE_IMPL
+- `backend/tests/ports/test_simulation_engine_contract.py` — 10 tests de contrat
+
+**Résultats:**
+- ✅ Tests: 10 contract tests agnostiques
+- ✅ Passent avec MemoryEngine ET FileStorageEngine
+- ✅ Isolation: chaque test obtient une instance fraîche
+
+## ✅ Mission A4-5 – FileStorageEngine (COMPLÉTÉE)
+
+**Status:** ✅ Done (PR #3)
 
 **Livrables:**
 - `backend/src/ager/settings.py` — Configuration (AGER_ENGINE, AGER_STORAGE_PATH)
 - `backend/src/ager/adapters/file_engine.py` — FileStorageEngine (persistance JSON)
 - `backend/src/ager/container.py` — Sélection dynamique du moteur
 - `backend/tests/test_file_engine.py` — 9 tests unitaires
-- `backend/tests/ports/` — Tests de contrat agnostiques (TEST_ENGINE_IMPL)
+- `backend/tests/ports/conftest.py` — Adapté pour TEST_ENGINE_IMPL
 
 **Résultats:**
 - ✅ Tests: 28 verts (19 anciens + 9 nouveaux)
@@ -78,6 +91,35 @@
 - `AGER_ENGINE=file` → FileStorageEngine
 - `AGER_STORAGE_PATH=./data/world.json` (défaut)
 
+## ✅ Mission A5-2 – File Storage Seeding & Validation (COMPLÉTÉE)
+
+**Status:** ✅ Done (PR #4, branche feat/A5-2-file-seed-and-validation)
+
+**Livrables:**
+- `backend/tools/seed_file_storage.py` — Script CLI de seed avec argparse
+- `backend/tests/test_seed_file_storage.py` — 9 tests de validation du seed
+- `backend/src/ager/adapters/file_engine.py` — Support dual-format JSON (legacy + seed)
+- `.github/workflows/backend-ci.yml` — CI step pour TEST_ENGINE_IMPL=file
+
+**Résultats:**
+- ✅ Tests: 37 verts (28 précédents + 9 seed validation)
+- ✅ Couverture: 94% (> 90%)
+- ✅ Seed tool fonctionnel: `python -m tools.seed_file_storage [--path custom/path.json]`
+- ✅ Dual-format: compatibilité arrière avec resources inline + nouveau format séparé
+- ✅ CI validé avec contract tests (TEST_ENGINE_IMPL=file)
+- ✅ MyPy: validé
+- ✅ Ruff/Black: OK
+- ✅ Fix encoding Windows (emojis → plain text)
+
+**Format seed JSON:**
+```json
+{
+  "villages": {"1": {"id": 1, "name": "Capitale"}},
+  "resources": {"1": {"wood": 100, "clay": 80, "iron": 90, "crop": 75}},
+  "buildQueues": {"1": [{"building": "farm", "level": 2, "queuedAt": "..."}]}
+}
+```
+
 ## Prochaines missions
 
-À définir avec Chef Dev après merge de la PR A4-5.
+À définir avec Chef Dev après consolidation et merge des PRs (A4-4, A4-5, A5-2).

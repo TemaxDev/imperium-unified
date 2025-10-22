@@ -40,6 +40,5 @@ def engine() -> SimulationEngine:
         return SQLiteEngine(db_path)
     else:
         raise ValueError(
-            f"TEST_ENGINE_IMPL invalide: {engine_type}. "
-            "Valeurs: 'memory', 'file', 'sql'"
+            f"TEST_ENGINE_IMPL invalide: {engine_type}. " "Valeurs: 'memory', 'file', 'sql'"
         )

@@ -1,0 +1,52 @@
+# HANDOFF — Imperium Unified
+
+## Repo & branches
+
+- Repo: https://github.com/TemaxDev/imperium-unified
+- Branch active: feat/A4-adapter-ager (Architecture Ports/Adapters)
+
+## Environnement
+
+- Python: conda env `imperium312` (3.12)
+- Démarrer:
+  ```bash
+  conda activate imperium312
+  cd backend
+  pytest -q
+  uvicorn ager.app:app --reload --app-dir src
+  ```
+
+## État technique
+
+- Backend: FastAPI ok → routes `/health`, `/snapshot`, `/village/{id}`, `/cmd/build`
+- Architecture: Ports/Adapters (SimulationEngine + MemoryEngine)
+- Tests: 9 verts, couverture 95%
+- Frontend: Vite/React structuré (non branché)
+- CI: backend, frontend, PR checks, CodeQL
+
+## ✅ Mission A4-3 – Adaptateur AGER (COMPLÉTÉE)
+
+**Status:** ✅ Done (PR en cours vers main)
+
+**Livrables:**
+- `backend/src/ager/models.py` — DTOs (Village, Resources, BuildCmd)
+- `backend/src/ager/ports.py` — Port `SimulationEngine` (Protocol)
+- `backend/src/ager/adapters/memory_engine.py` — Implémentation in-memory
+- `backend/src/ager/container.py` — Conteneur DI `get_engine()`
+- `backend/src/ager/app.py` — Rewiring (utilise `get_engine()`)
+- `backend/tests/test_engine_memory.py` — 3 tests unitaires
+- `backend/tests/test_api_errors.py` — Tests API 404/422
+
+**Résultats:**
+- ✅ Tests verts: 9/9
+- ✅ Couverture: 95% (> 90%)
+- ✅ JSON contract: identique
+- ✅ Pas de state global: injection via `get_engine()`
+- ✅ MyPy: validé
+- ✅ Ruff/Black: OK
+
+**Architecture:** Ports/Adapters → pas de state global, JSON contract verrouillé.
+
+## Prochaines missions
+
+À définir avec Chef Dev après merge de la PR A4-3.

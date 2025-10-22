@@ -1,0 +1,9 @@
+from typing import Protocol
+
+from .models import BuildCmd, Village
+
+
+class SimulationEngine(Protocol):
+    def snapshot(self) -> list[Village]: ...
+    def get_village(self, vid: int) -> Village | None: ...
+    def queue_build(self, cmd: BuildCmd) -> bool: ...

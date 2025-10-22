@@ -3,7 +3,7 @@
 ## Repo & branches
 
 - Repo: https://github.com/TemaxDev/imperium-unified
-- Branch active: feat/A6-2-orm-and-migrations (ORM + Migrations)
+- Branch active: feat/A6-3-ci (CI Refactor)
 
 ## Environnement
 
@@ -34,7 +34,7 @@
 - Migrations: Système SQL simple avec versioning
 - Tests: 55 verts (45 précédents + 10 ORM/migrations), couverture 93%
 - Frontend: Vite/React structuré (non branché)
-- CI: backend, frontend, PR checks, CodeQL + contract tests avec FileStorageEngine + SQLiteEngine
+- CI: Matrix testing (memory/file/sql) + workflows modernisés (concurrency, timeouts, coverage gate 90%)
 
 ## ✅ Mission A4-3 – Adaptateur AGER (COMPLÉTÉE)
 
@@ -190,6 +190,33 @@
 - `0002_seed.sql`: Insert village 1 "Capitale"
 - Runner idempotent (skip déjà appliquées)
 - Ordre alphabétique garanti
+
+## ✅ Mission A6-3 – CI Solide (COMPLÉTÉE)
+
+**Status:** ✅ Done (PR en cours, branche feat/A6-3-ci)
+
+**Objectif:** Refactoriser les workflows CI/CD pour robustesse et matrix testing.
+
+**Livrables:**
+- `.github/workflows/backend-ci.yml` — Matrix testing (py3.12 × [memory, file, sql])
+- `.github/workflows/frontend-ci.yml` — Modernisé (Node 20, concurrency, timeouts)
+- `.github/workflows/codeql.yml` — Modernisé (concurrency, timeouts)
+- `.github/workflows/pr-checks.yml` — Modernisé (concurrency, timeouts)
+
+**Résultats:**
+- ✅ Backend CI: Matrix testing sur 3 implémentations (memory, file, sql)
+- ✅ Coverage gate: 90% minimum enforced
+- ✅ Concurrency control: Annulation des jobs obsolètes (cancel-in-progress)
+- ✅ Timeouts: backend 15min, frontend 10min, pr-checks 5min, codeql 20min
+- ✅ Branches: migration master → main
+- ✅ Artefacts: upload coverage par impl pour debug
+- ✅ Contract tests exécutés pour chaque impl (TEST_ENGINE_IMPL)
+
+**Architecture CI:**
+- Backend: ruff → black → mypy → unit tests → contract tests (matrix) → coverage gate
+- Frontend: eslint → prettier → tsc → vitest → build
+- CodeQL: analyse Python + JavaScript (hebdo + push/PR)
+- PR checks: validation conventional commits + naming + merge conflicts
 
 ## Prochaines missions
 

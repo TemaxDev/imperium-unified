@@ -33,7 +33,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dependencies**: Added `sqlmodel>=0.0.27` to project dependencies in pyproject.toml
 - **Code Quality**: Migrated Ruff configuration to `[tool.ruff.lint]` section (new format)
 - **Test Coverage**: Improved to 93% with 55 tests total (45 previous + 10 ORM/migrations)
-- **CI**: Added contract test validation with FileStorageEngine (`TEST_ENGINE_IMPL=file`) and SQLiteEngine (`TEST_ENGINE_IMPL=sql`)
+- **CI Workflows**: Complete refactor to modern practices with matrix testing, concurrency control, and coverage enforcement
+  - **Backend CI**: Matrix testing across all 3 implementations (memory/file/sql) with pytest contract tests
+  - **Frontend CI**: Added matrix support (Node 20), concurrency control, and timeout limits
+  - **CodeQL**: Added concurrency control and timeout limits (20min)
+  - **PR Checks**: Added concurrency control and timeout limits (5min)
+  - **Branch Migration**: All workflows migrated from `master` → `main` branch
+  - **Timeouts**: backend 15min, frontend 10min to prevent hanging jobs
+  - **Concurrency**: `cancel-in-progress: true` for all workflows to stop obsolete jobs
+  - **Coverage Gate**: Enforced 90% minimum coverage with `--cov-fail-under=90`
+  - **Artifacts**: Upload coverage reports per implementation for debugging
 
 ### Fixed
 - **Circular Import**: Resolved circular dependency between `app.py`, `container.py`, and `memory_engine.py` by extracting DTOs

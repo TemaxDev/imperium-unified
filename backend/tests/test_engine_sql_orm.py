@@ -1,6 +1,5 @@
 """Tests for SQLiteEngine with ORM."""
 
-
 from ager.adapters.sql_engine import SQLiteEngine
 from ager.models import BuildCmd
 
@@ -65,9 +64,7 @@ def test_build_not_found(tmp_path):
     db = tmp_path / "test.db"
     eng = SQLiteEngine(db)
 
-    result = eng.queue_build(
-        BuildCmd(villageId=999_999, building="farm", levelTarget=2)
-    )
+    result = eng.queue_build(BuildCmd(villageId=999_999, building="farm", levelTarget=2))
     assert result is False
 
 

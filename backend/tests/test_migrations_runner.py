@@ -21,9 +21,7 @@ def test_runner_applies_only_new_migrations(tmp_path):
 
     # Vérifier que la table existe
     conn = sqlite3.connect(db_path)
-    cursor = conn.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='test_table'"
-    )
+    cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='test_table'")
     assert cursor.fetchone() is not None
 
     # Vérifier que la migration est enregistrée
@@ -76,9 +74,7 @@ def test_runner_is_idempotent(tmp_path):
 
     # Vérifier qu'il n'y a qu'une seule entrée dans schema_migrations
     conn = sqlite3.connect(db_path)
-    cursor = conn.execute(
-        "SELECT COUNT(*) FROM schema_migrations WHERE version='0001_test'"
-    )
+    cursor = conn.execute("SELECT COUNT(*) FROM schema_migrations WHERE version='0001_test'")
     count = cursor.fetchone()[0]
     assert count == 1
 

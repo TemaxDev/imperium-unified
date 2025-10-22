@@ -9,23 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **AGER Ports/Adapters Architecture**: Implemented hexagonal architecture with `SimulationEngine` port and `MemoryEngine` adapter for clean separation of concerns
-- **SQLiteEngine**: Persistent adapter using SQLite database for world state (selectable via `AGER_ENGINE=sql`)
+- **SQLiteEngine with ORM**: Persistent adapter using SQLite database with SQLModel ORM for world state (selectable via `AGER_ENGINE=sql`)
+- **ORM Layer**: SQLModel (SQLAlchemy 2.0 + Pydantic) models for `Village`, `Resources`, and `BuildQueue` tables
+- **Migration System**: Simple SQL migration runner with versioning (`schema_migrations` table, idempotent, alphabetical order)
+- **Migration Files**: `0001_init.sql` (schema DDL), `0002_seed.sql` (initial data seed)
+- **Session Management**: Dynamic engine cache by db_path in `db/session.py` with `get_session()` and `get_engine()` helpers
 - **FileStorageEngine**: Persistent adapter using JSON file storage for world state (selectable via `AGER_ENGINE` env var)
 - **Seed Tool**: CLI tool `python -m tools.seed_file_storage` to initialize FileStorageEngine state with sample data
 - **Settings Module**: Configuration management with `get_engine_type()`, `get_storage_path()`, and `get_db_path()` (env: `AGER_ENGINE`, `AGER_STORAGE_PATH`, `AGER_DB_PATH`)
 - **Dependency Injection**: Enhanced `container.py` with dynamic engine selection based on environment configuration (memory/file/sql)
 - **Contract Tests**: 10 implementation-agnostic tests in `tests/ports/` validating `SimulationEngine` interface
 - **DTO Models**: Extracted DTOs (`Village`, `Resources`, `BuildCmd`) into dedicated `models.py` module to resolve circular dependencies
-- **Unit Tests**: Added `test_engine_memory.py` (3 tests), `test_file_engine.py` (9 tests), `test_seed_file_storage.py` (9 tests), `test_engine_sql.py` (8 tests), and contract tests (10 tests)
+- **Unit Tests**: Added `test_engine_memory.py` (3 tests), `test_file_engine.py` (9 tests), `test_seed_file_storage.py` (9 tests), `test_engine_sql.py` (8 tests), `test_engine_sql_orm.py` (7 tests), `test_migrations_runner.py` (3 tests), and contract tests (10 tests)
 - **API Error Tests**: Added `test_api_errors.py` covering 404 (village not found) and 422 (invalid command) scenarios
 
 ### Changed
+- **SQLiteEngine**: Complete refactor from raw SQL to ORM-based implementation using SQLModel sessions
+- **Database Schema**: Renamed table `villages` → `village` to match SQLModel conventions
 - **Container**: Refactored to support multiple engine implementations (memory/file/sql) with `_create_engine()` factory and `reset_engine()` for tests
 - **Settings**: Extended `EngineType` to include "sql" and added `get_db_path()` helper
 - **FileStorageEngine**: Enhanced to support dual-format JSON (legacy inline resources + new separated resources/buildQueues)
 - **API Rewiring**: Updated `app.py` to use `get_engine()` dependency injection instead of direct state access
+- **Dependencies**: Added `sqlmodel>=0.0.27` to project dependencies in pyproject.toml
 - **Code Quality**: Migrated Ruff configuration to `[tool.ruff.lint]` section (new format)
-- **Test Coverage**: Maintained at 92% with 45 tests total (37 previous + 8 SQL)
+- **Test Coverage**: Improved to 93% with 55 tests total (45 previous + 10 ORM/migrations)
 - **CI**: Added contract test validation with FileStorageEngine (`TEST_ENGINE_IMPL=file`) and SQLiteEngine (`TEST_ENGINE_IMPL=sql`)
 
 ### Fixed

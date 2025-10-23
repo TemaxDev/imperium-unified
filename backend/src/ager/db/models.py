@@ -32,3 +32,22 @@ class BuildQueue(SQLModel, table=True):
     building: str
     level: int
     queued_at: str
+
+
+class Building(SQLModel, table=True):
+    """Building levels ORM model (A7)."""
+
+    __tablename__ = "buildings"
+
+    village_id: int = Field(primary_key=True, foreign_key="village.id")
+    building: str = Field(primary_key=True)
+    level: int = Field(default=1)
+
+
+class EngineState(SQLModel, table=True):
+    """Engine state ORM model (A7) - tracks last tick per village."""
+
+    __tablename__ = "engine_state"
+
+    village_id: int = Field(primary_key=True, foreign_key="village.id")
+    last_tick: str

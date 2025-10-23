@@ -1,4 +1,5 @@
 """Edge case tests to improve branch coverage."""
+
 from datetime import UTC, datetime, timedelta
 
 from ager.adapters.memory_engine import MemoryEngine
@@ -55,9 +56,7 @@ def test_build_with_invalid_building_name():
 
     now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
 
-    result = system.queue_build(
-        village_id=1, building="invalid_building", rules=rules, now=now
-    )
+    result = system.queue_build(village_id=1, building="invalid_building", rules=rules, now=now)
 
     assert result is False
 
@@ -72,9 +71,7 @@ def test_build_max_level_rejected():
 
     now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
 
-    result = system.queue_build(
-        village_id=1, building="lumber_mill", rules=rules, now=now
-    )
+    result = system.queue_build(village_id=1, building="lumber_mill", rules=rules, now=now)
 
     assert result is False
 
@@ -87,9 +84,7 @@ def test_build_nonexistent_village():
 
     now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
 
-    result = system.queue_build(
-        village_id=999, building="lumber_mill", rules=rules, now=now
-    )
+    result = system.queue_build(village_id=999, building="lumber_mill", rules=rules, now=now)
 
     assert result is False
 

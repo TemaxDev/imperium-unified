@@ -18,9 +18,7 @@ def test_build_system_insufficient_resources():
 
     now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
     # Try to upgrade lumber_mill to level 2 (costs ~77 wood)
-    result = system.queue_build(
-        village_id=1, building="lumber_mill", rules=rules, now=now
-    )
+    result = system.queue_build(village_id=1, building="lumber_mill", rules=rules, now=now)
 
     assert result is False
     assert 1 not in system.pending_builds
@@ -36,15 +34,11 @@ def test_build_system_queue_occupied():
     now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
 
     # Queue first build
-    result1 = system.queue_build(
-        village_id=1, building="lumber_mill", rules=rules, now=now
-    )
+    result1 = system.queue_build(village_id=1, building="lumber_mill", rules=rules, now=now)
     assert result1 is True
 
     # Try to queue second build - should be refused
-    result2 = system.queue_build(
-        village_id=1, building="clay_pit", rules=rules, now=now
-    )
+    result2 = system.queue_build(village_id=1, building="clay_pit", rules=rules, now=now)
     assert result2 is False
 
 
@@ -57,9 +51,7 @@ def test_build_system_eta_calculation():
 
     now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
 
-    result = system.queue_build(
-        village_id=1, building="lumber_mill", rules=rules, now=now
-    )
+    result = system.queue_build(village_id=1, building="lumber_mill", rules=rules, now=now)
     assert result is True
 
     # Check ETA
@@ -83,9 +75,7 @@ def test_build_system_completion():
     assert engine.buildings[1]["lumber_mill"] == 1
 
     # Queue build
-    result = system.queue_build(
-        village_id=1, building="lumber_mill", rules=rules, now=now
-    )
+    result = system.queue_build(village_id=1, building="lumber_mill", rules=rules, now=now)
     assert result is True
 
     # Before ETA - no completion
@@ -109,9 +99,7 @@ def test_build_system_resource_deduction():
     """Test that resources are deducted when build is queued."""
     engine = MemoryEngine()
     initial_wood = 1000
-    engine.world[1].resources = Resources(
-        wood=initial_wood, clay=1000, iron=1000, crop=1000
-    )
+    engine.world[1].resources = Resources(wood=initial_wood, clay=1000, iron=1000, crop=1000)
     system = BuildSystem(engine)
     rules = default_rules()
 
@@ -119,9 +107,7 @@ def test_build_system_resource_deduction():
 
     cost = int(rules.cost("lumber_mill", 2))
 
-    result = system.queue_build(
-        village_id=1, building="lumber_mill", rules=rules, now=now
-    )
+    result = system.queue_build(village_id=1, building="lumber_mill", rules=rules, now=now)
     assert result is True
 
     # Resources should be deducted

@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0-A7] - 2025-10-23
+
+### Added
+- **Gameplay Engine (A7)**: Deterministic tick-based gameplay system built on top of existing ports/adapters
+- **Production System**: Resource accrual based on building levels and time delta (Δt)
+  - Formula: `production = floor(rate(level) * Δt_hours)` where `rate(level) = base * 1.15^(level-1)`
+  - Idempotent: same `now` parameter produces empty delta on second call
+  - Tracks `last_tick` per village in `engine_state` table/structure
+- **Build System**: Single-queue build management per village
+  - Deducts resources at enqueue time
+  - Calculates ETA based on building level: `duration_s(level) = base * 1.32^(level-1)`
+  - Completes builds when `ETA <= now`, increments building level
+  - Cost formula: `cost(level) = base * 1.28^(level-1)`
+- **GameplayService**: Orchestrates tick execution (Production → Build systems)
+- **Gameplay Rules v1**: Versioned rules with configurable base rates, costs, and durations
+- **Gameplay Migrations**: SQL migrations 0003-0005 for `buildings` and `engine_state` tables
+- **Gameplay Persistence**: Extended MemoryEngine and FileStorageEngine with buildings/engineState structures
+- **Internal API Endpoints**:
+  - `POST /cmd/tick`: Execute gameplay tick (accepts optional ISO datetime `now` parameter)
+  - `GET /rules`: Expose current gameplay rules (version, rates, costs, durations)
+- **Clock Abstractions**: `SystemClock` and `FixedClock` for deterministic testing
+- **Resource Deltas**: `ResourceDelta` and `SnapshotDelta` for tracking state changes
+- **Gameplay Tests**: 23 comprehensive tests covering rules, production, builds, idempotence, and API
+- **ORM Models**: Added `Building` and `EngineState` models for SQL adapter
+
+### Changed
+- **Engine Adapters**: Non-breaking extension with gameplay persistence (buildings, engine_state)
+- **Existing API**: `/cmd/build` behavior unchanged - maintains same response format (non-breaking)
+- **Test Coverage**: Increased to 64% overall with 89-96% coverage on gameplay systems
+
+### Fixed
+- **Idempotence**: Tick with same `now` parameter produces empty delta (deterministic)
+- **Build Completion**: No duplicate completions when multiple ticks occur after ETA
+
+## [0.6.3-A6-ci] - 2025-10-22
+
 ### Added
 - **AGER Ports/Adapters Architecture**: Implemented hexagonal architecture with `SimulationEngine` port and `MemoryEngine` adapter for clean separation of concerns
 - **SQLiteEngine with ORM**: Persistent adapter using SQLite database with SQLModel ORM for world state (selectable via `AGER_ENGINE=sql`)

@@ -24,9 +24,7 @@ def get_gameplay_service(engine: SimulationEngine = Depends(get_engine)) -> Game
 
 
 @router.post("/cmd/tick")
-def cmd_tick(
-    now: str | None = None, service: GameplayService = Depends(get_gameplay_service)
-):
+def cmd_tick(now: str | None = None, service: GameplayService = Depends(get_gameplay_service)):
     """Execute gameplay tick (production + build completions).
 
     Args:
@@ -43,9 +41,7 @@ def cmd_tick(
     delta = service.tick(dt)
 
     return {
-        "resources_changed": {
-            str(k): vars(v) for k, v in delta.resources_changed.items()
-        },
+        "resources_changed": {str(k): vars(v) for k, v in delta.resources_changed.items()},
         "builds_completed": [(vid, b) for (vid, b) in delta.builds_completed],
     }
 

@@ -23,9 +23,7 @@ class BuildSystem:
         # Track pending builds: {village_id: {"building": str, "target_level": int, "eta": datetime}}
         self.pending_builds: dict[int, dict] = {}
 
-    def queue_build(
-        self, *, village_id: int, building: str, rules: Rules, now: datetime
-    ) -> bool:
+    def queue_build(self, *, village_id: int, building: str, rules: Rules, now: datetime) -> bool:
         """Queue a building upgrade if resources are sufficient.
 
         Args:

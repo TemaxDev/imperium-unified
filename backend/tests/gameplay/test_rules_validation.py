@@ -23,9 +23,7 @@ def test_rules_monotonicity_and_bounds():
 
             assert cur_rate > prev_rate, f"{b} rate not monotonic at level {lvl}"
             assert cur_cost > prev_cost, f"{b} cost not monotonic at level {lvl}"
-            assert (
-                cur_duration > prev_duration
-            ), f"{b} duration not monotonic at level {lvl}"
+            assert cur_duration > prev_duration, f"{b} duration not monotonic at level {lvl}"
 
             prev_rate = cur_rate
             prev_cost = cur_cost

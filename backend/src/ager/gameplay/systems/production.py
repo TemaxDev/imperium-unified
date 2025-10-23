@@ -95,7 +95,12 @@ class ProductionSystem:
                     resource_delta.crop += production
 
             # Apply production to village resources
-            if resource_delta.wood or resource_delta.clay or resource_delta.iron or resource_delta.crop:
+            if (
+                resource_delta.wood
+                or resource_delta.clay
+                or resource_delta.iron
+                or resource_delta.crop
+            ):
                 village.resources.wood += resource_delta.wood
                 village.resources.clay += resource_delta.clay
                 village.resources.iron += resource_delta.iron

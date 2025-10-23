@@ -46,12 +46,8 @@ class FileStorageEngine:
                         "queue": [],
                     }
                 },
-                "buildings": {
-                    "1": {"lumber_mill": 1, "clay_pit": 1, "iron_mine": 1, "farm": 1}
-                },
-                "engineState": {
-                    "1": {"last_tick": datetime.now(timezone.utc).isoformat()}
-                },
+                "buildings": {"1": {"lumber_mill": 1, "clay_pit": 1, "iron_mine": 1, "farm": 1}},
+                "engineState": {"1": {"last_tick": datetime.now(timezone.utc).isoformat()}},
             }
             self.storage_path.write_text(json.dumps(default_world, indent=2))
 

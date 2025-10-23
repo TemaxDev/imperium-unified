@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from typing import Any
 
 from fastapi import APIRouter, Depends
 
@@ -24,7 +25,9 @@ def get_gameplay_service(engine: SimulationEngine = Depends(get_engine)) -> Game
 
 
 @router.post("/cmd/tick")
-def cmd_tick(now: str | None = None, service: GameplayService = Depends(get_gameplay_service)):
+def cmd_tick(
+    now: str | None = None, service: GameplayService = Depends(get_gameplay_service)
+) -> dict[str, Any]:
     """Execute gameplay tick (production + build completions).
 
     Args:
@@ -34,9 +37,9 @@ def cmd_tick(now: str | None = None, service: GameplayService = Depends(get_game
     Returns:
         Dictionary with resources_changed and builds_completed
     """
-    dt = datetime.now(timezone.utc) if not now else datetime.fromisoformat(now)
+    dt = datetime.now(UTC) if not now else datetime.fromisoformat(now)
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.replace(tzinfo=UTC)
 
     delta = service.tick(dt)
 
@@ -47,7 +50,7 @@ def cmd_tick(now: str | None = None, service: GameplayService = Depends(get_game
 
 
 @router.get("/rules")
-def get_rules(service: GameplayService = Depends(get_gameplay_service)):
+def get_rules(service: GameplayService = Depends(get_gameplay_service)) -> dict[str, Any]:
     """Get current gameplay rules.
 
     Returns:

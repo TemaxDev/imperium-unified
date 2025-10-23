@@ -1,6 +1,4 @@
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from ager.adapters.memory_engine import MemoryEngine
 from ager.gameplay.rules import default_rules
@@ -16,7 +14,7 @@ def test_build_system_insufficient_resources():
     system = BuildSystem(engine)
     rules = default_rules()
 
-    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
     # Try to upgrade lumber_mill to level 2 (costs ~77 wood)
     result = system.queue_build(village_id=1, building="lumber_mill", rules=rules, now=now)
 
@@ -31,7 +29,7 @@ def test_build_system_queue_occupied():
     system = BuildSystem(engine)
     rules = default_rules()
 
-    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
 
     # Queue first build
     result1 = system.queue_build(village_id=1, building="lumber_mill", rules=rules, now=now)
@@ -49,7 +47,7 @@ def test_build_system_eta_calculation():
     system = BuildSystem(engine)
     rules = default_rules()
 
-    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
 
     result = system.queue_build(village_id=1, building="lumber_mill", rules=rules, now=now)
     assert result is True
@@ -69,7 +67,7 @@ def test_build_system_completion():
     system = BuildSystem(engine)
     rules = default_rules()
 
-    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
 
     # Initial level
     assert engine.buildings[1]["lumber_mill"] == 1
@@ -103,7 +101,7 @@ def test_build_system_resource_deduction():
     system = BuildSystem(engine)
     rules = default_rules()
 
-    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
 
     cost = int(rules.cost("lumber_mill", 2))
 

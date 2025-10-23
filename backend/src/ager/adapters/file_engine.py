@@ -4,7 +4,7 @@ Implémentation persistante utilisant un fichier JSON pour stocker l'état du mo
 """
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -47,7 +47,7 @@ class FileStorageEngine:
                     }
                 },
                 "buildings": {"1": {"lumber_mill": 1, "clay_pit": 1, "iron_mine": 1, "farm": 1}},
-                "engineState": {"1": {"last_tick": datetime.now(timezone.utc).isoformat()}},
+                "engineState": {"1": {"last_tick": datetime.now(UTC).isoformat()}},
             }
             self.storage_path.write_text(json.dumps(default_world, indent=2))
 
@@ -174,7 +174,7 @@ class FileStorageEngine:
                 # Parse ISO format datetime
                 last_tick = datetime.fromisoformat(last_tick_str)
                 if last_tick.tzinfo is None:
-                    last_tick = last_tick.replace(tzinfo=timezone.utc)
+                    last_tick = last_tick.replace(tzinfo=UTC)
                 self.engine_state[vid] = {"last_tick": last_tick}
 
         # Initialize defaults if missing
@@ -187,4 +187,4 @@ class FileStorageEngine:
                     "farm": 1,
                 }
             if vid not in self.engine_state:
-                self.engine_state[vid] = {"last_tick": datetime.now(timezone.utc)}
+                self.engine_state[vid] = {"last_tick": datetime.now(UTC)}

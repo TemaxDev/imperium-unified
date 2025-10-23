@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict
 
 BUILDINGS = ("lumber_mill", "clay_pit", "iron_mine", "farm")
 
 
 @dataclass(frozen=True)
 class Rules:
+    base_rates: dict[str, float]  # units/hour
+    base_costs: dict[str, float]  # resource-equivalent
+    base_durations_s: dict[str, float]  # seconds
     version: str = "v1"
-    base_rates: Dict[str, float] | None = None  # units/hour
-    base_costs: Dict[str, float] | None = None  # resource-equivalent
-    base_durations_s: Dict[str, float] | None = None  # seconds
 
     def rate(self, building: str, level: int) -> float:
         assert building in BUILDINGS, f"unknown building: {building}"

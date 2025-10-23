@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from ager.adapters.memory_engine import MemoryEngine
 from ager.gameplay.engine import GameplayService
@@ -16,7 +16,7 @@ def test_tick_idempotency_same_now():
         rules=default_rules(),
     )
 
-    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
     engine.engine_state[1]["last_tick"] = start
 
     now = start + timedelta(hours=1)
@@ -40,7 +40,7 @@ def test_tick_idempotency_backwards_time():
         rules=default_rules(),
     )
 
-    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
     engine.engine_state[1]["last_tick"] = start
 
     # Advance to +2 hours

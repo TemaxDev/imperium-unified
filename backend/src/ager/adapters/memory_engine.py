@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from ..models import BuildCmd, Resources, Village
 
 
@@ -11,9 +12,7 @@ class MemoryEngine:
         self.buildings: dict[int, dict[str, int]] = {
             1: {"lumber_mill": 1, "clay_pit": 1, "iron_mine": 1, "farm": 1}
         }
-        self.engine_state: dict[int, dict[str, datetime]] = {
-            1: {"last_tick": datetime.now(timezone.utc)}
-        }
+        self.engine_state: dict[int, dict[str, datetime]] = {1: {"last_tick": datetime.now(UTC)}}
 
     def snapshot(self) -> list[Village]:
         return list(self.world.values())

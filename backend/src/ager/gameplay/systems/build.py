@@ -20,7 +20,8 @@ class BuildSystem:
             engine: The simulation engine (MemoryEngine, FileStorageEngine, or SQLiteEngine)
         """
         self.engine = engine
-        # Track pending builds: {village_id: {"building": str, "target_level": int, "eta": datetime}}
+        # Track pending builds per village:
+        # {village_id: {"building": str, "target_level": int, "eta": datetime}}
         self.pending_builds: dict[int, dict] = {}
 
     def queue_build(self, *, village_id: int, building: str, rules: Rules, now: datetime) -> bool:

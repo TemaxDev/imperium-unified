@@ -1,6 +1,4 @@
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from ager.adapters.memory_engine import MemoryEngine
 from ager.gameplay.rules import default_rules
@@ -13,7 +11,7 @@ def test_production_system_zero_delta():
     system = ProductionSystem(engine)
     rules = default_rules()
 
-    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
     engine.engine_state[1]["last_tick"] = now
 
     delta = system.apply(now=now, rules=rules)
@@ -27,7 +25,7 @@ def test_production_system_one_hour():
     system = ProductionSystem(engine)
     rules = default_rules()
 
-    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
     engine.engine_state[1]["last_tick"] = start
 
     # Advance 1 hour
@@ -51,7 +49,7 @@ def test_production_system_fractional_hour():
     system = ProductionSystem(engine)
     rules = default_rules()
 
-    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
     engine.engine_state[1]["last_tick"] = start
 
     # Advance 0.5 hours
@@ -73,7 +71,7 @@ def test_production_system_cumulative():
     system = ProductionSystem(engine)
     rules = default_rules()
 
-    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
     engine.engine_state[1]["last_tick"] = start
 
     # Initial resources
@@ -102,7 +100,7 @@ def test_production_system_idempotence():
     system = ProductionSystem(engine)
     rules = default_rules()
 
-    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2025, 10, 22, 12, 0, 0, tzinfo=UTC)
     engine.engine_state[1]["last_tick"] = start
 
     now = start + timedelta(hours=1)

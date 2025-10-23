@@ -71,7 +71,7 @@ class ProductionSystem:
             if not hasattr(self.engine, "buildings"):
                 continue
 
-            buildings = self.engine.buildings.get(vid, {})
+            buildings = self.engine.buildings.get(vid, {})  # type: ignore[attr-defined]
 
             # Calculate production for each building
             resource_delta = ResourceDelta()

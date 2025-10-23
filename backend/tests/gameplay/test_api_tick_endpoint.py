@@ -1,10 +1,8 @@
-from datetime import datetime, timedelta, timezone
-
-from httpx import ASGITransport, AsyncClient
 import pytest
+from httpx import ASGITransport, AsyncClient
 
 from ager.app import app
-from ager.container import get_engine, reset_engine
+from ager.container import reset_engine
 
 
 @pytest.fixture(autouse=True)

@@ -55,8 +55,9 @@ ignore = []
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-"tests/**/*.py" = ["S101"]
+"tests/**/*.py" = ["S101", "F841"]  # Allow unused vars in tests
 "src/ager/models.py" = ["N815"]  # Allow camelCase for API DTOs (JSON contract)
+"src/ager/app_gameplay.py" = ["B008"]  # Allow Depends() in FastAPI function defaults
 
 [tool.black]
 line-length = 100

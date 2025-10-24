@@ -7,6 +7,102 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0-A8] - 2025-10-23
+
+### Added
+- **AI Diplomacy Layer (A8)**: Deterministic AI diplomacy system with opinion dynamics, stance computation, and treaty management
+- **Diplomacy Rules v1 (diplo_v1)**: Versioned rules with calibrated constants for 30-60min gameplay
+  - Opinion cooldown: `opinion *= 0.98` per game-hour (decay towards 0)
+  - Attack penalty: `-20` opinion per aggression
+  - Trade bonus: `+8` opinion per trade transaction
+  - Honor bonus: `+1.5` opinion per hour of active alliance
+  - Stance thresholds: ALLY (≥40), HOSTILE (≤-40), NEUTRAL otherwise
+- **Evaluator Service**: Time-based opinion/stance updates with treaty expiration
+  - Opinion cooldown (multiplicative decay)
+  - Stance recomputation based on opinion + treaty locks
+  - Treaty expiration handling
+  - Honor bonuses for active alliances
+- **Proposer Service**: Deterministic AI suggestions with integer scoring
+  - CEASEFIRE: suggested for HOSTILE stance + recent attacks
+  - TRADE: suggested for NEUTRAL stance + recent trades (blocked if already active)
+  - ALLIANCE: suggested for high opinion (≥20) + shared enemies
+  - Tie-breaker: stable ordering by TYPE_RANK (CEASEFIRE < TRADE < ALLIANCE)
+- **TreatyService**: Treaty proposal and lifecycle management
+  - Immediate stance/opinion adjustments on treaty opening
+  - CEASEFIRE: calms HOSTILE → NEUTRAL, adds opinion boost
+  - TRADE: no stance lock (benefits via trade events)
+  - ALLIANCE: locks stance to ALLY, ensures opinion ≥ ally_threshold
+  - Idempotent duplicate detection
+- **Diplomacy Migrations**: SQL migrations 0006-0007 for factions, relations, treaties, events tables
+  - Relations normalized with `CHECK (a < b)` constraint
+  - Treaties track status (ACTIVE/EXPIRED/CANCELLED)
+  - Events log for audit trail
+- **Diplomacy Persistence**: Extended Memory/File/SQL engines with diplomacy structures
+  - DiploStore protocol with normalize_pair() helper
+  - MemoryDiploStore, FileDiploStore, SQLDiploStore implementations
+  - Auto-saves for FileEngine, transactions for SQLEngine
+- **Internal API Endpoints**:
+  - `POST /ai/diplomacy/tick`: Apply time-based diplomacy updates
+  - `GET /ai/diplomacy/suggest?a=X&b=Y&k=3`: Get top-k AI suggestions
+  - `POST /ai/diplomacy/propose`: Propose treaty between factions
+  - `GET /ai/diplomacy/rules`: Expose diplomacy rules constants
+- **Diplomacy DTOs**: Type-safe data transfer objects with Literal types
+  - StanceType, TreatyType, TreatyStatus
+  - Faction, Relation, Treaty, DiplomacyEvent, Suggestion
+- **ORM Models**: Added Faction, Relation, Treaty, DiplomacyEvent models for SQL adapter
+- **Comprehensive Tests**: 41 tests across 5 test files
+  - Rules coherence (stance thresholds, treaty locks, cooldown)
+  - Tick updates (cooldown, expiration, events)
+  - Proposer suggestions (deterministic scoring, tie-breaking)
+  - Treaty flow (propose → active → expire)
+  - API endpoints (HTTP 200, schemas, determinism)
+
+### Changed
+- **Non-breaking**: Existing gameplay (A7) and simulation (A4-A6) APIs unchanged
+- **Architecture**: DiplomacyService sits above existing engine layer (no port modifications)
+- **Test Coverage**: 41 new tests, A8 services near 100% coverage
+
+### Fixed
+- **Deterministic Scoring**: All suggestion scores use integers (fixed-point) for cross-platform consistency
+- **Pair Normalization**: Relations always stored with `a < b` regardless of API call order
+- **Idempotence**: Duplicate treaty proposals rejected with clear reason
+
+## [0.7.0-A7] - 2025-10-23
+
+### Added
+- **Gameplay Engine (A7)**: Deterministic tick-based gameplay system built on top of existing ports/adapters
+- **Production System**: Resource accrual based on building levels and time delta (Δt)
+  - Formula: `production = floor(rate(level) * Δt_hours)` where `rate(level) = base * 1.15^(level-1)`
+  - Idempotent: same `now` parameter produces empty delta on second call
+  - Tracks `last_tick` per village in `engine_state` table/structure
+- **Build System**: Single-queue build management per village
+  - Deducts resources at enqueue time
+  - Calculates ETA based on building level: `duration_s(level) = base * 1.32^(level-1)`
+  - Completes builds when `ETA <= now`, increments building level
+  - Cost formula: `cost(level) = base * 1.28^(level-1)`
+- **GameplayService**: Orchestrates tick execution (Production → Build systems)
+- **Gameplay Rules v1**: Versioned rules with configurable base rates, costs, and durations
+- **Gameplay Migrations**: SQL migrations 0003-0005 for `buildings` and `engine_state` tables
+- **Gameplay Persistence**: Extended MemoryEngine and FileStorageEngine with buildings/engineState structures
+- **Internal API Endpoints**:
+  - `POST /cmd/tick`: Execute gameplay tick (accepts optional ISO datetime `now` parameter)
+  - `GET /rules`: Expose current gameplay rules (version, rates, costs, durations)
+- **Clock Abstractions**: `SystemClock` and `FixedClock` for deterministic testing
+- **Resource Deltas**: `ResourceDelta` and `SnapshotDelta` for tracking state changes
+- **Gameplay Tests**: 23 comprehensive tests covering rules, production, builds, idempotence, and API
+- **ORM Models**: Added `Building` and `EngineState` models for SQL adapter
+
+### Changed
+- **Engine Adapters**: Non-breaking extension with gameplay persistence (buildings, engine_state)
+- **Existing API**: `/cmd/build` behavior unchanged - maintains same response format (non-breaking)
+- **Test Coverage**: Increased to 64% overall with 89-96% coverage on gameplay systems
+
+### Fixed
+- **Idempotence**: Tick with same `now` parameter produces empty delta (deterministic)
+- **Build Completion**: No duplicate completions when multiple ticks occur after ETA
+
+## [0.6.3-A6-ci] - 2025-10-22
+
 ### Added
 - **AGER Ports/Adapters Architecture**: Implemented hexagonal architecture with `SimulationEngine` port and `MemoryEngine` adapter for clean separation of concerns
 - **SQLiteEngine with ORM**: Persistent adapter using SQLite database with SQLModel ORM for world state (selectable via `AGER_ENGINE=sql`)

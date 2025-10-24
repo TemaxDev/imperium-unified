@@ -31,12 +31,19 @@ class FileStorageEngine:
         self.buildings: dict[int, dict[str, int]] = {}
         self.engine_state: dict[int, dict[str, datetime]] = {}
         self._load_gameplay_state()
+        # A8 diplomacy persistence (loaded from JSON)
+        self.factions: dict[int, dict] = {}
+        self.relations: dict[str, dict] = {}
+        self.treaties: dict[int, dict] = {}
+        self.diplomacy_events: list[dict] = []
+        self._next_treaty_id: int = 1
+        self._load_diplomacy_state()
 
     def _ensure_storage_exists(self) -> None:
         """Crée le répertoire de stockage et le fichier s'ils n'existent pas."""
         self.storage_path.parent.mkdir(parents=True, exist_ok=True)
         if not self.storage_path.exists():
-            # Initialiser avec un village par défaut (A7 includes buildings and engineState)
+            # Initialiser avec un village par défaut (A7 + A8 data)
             default_world = {
                 "villages": {
                     "1": {
@@ -48,6 +55,18 @@ class FileStorageEngine:
                 },
                 "buildings": {"1": {"lumber_mill": 1, "clay_pit": 1, "iron_mine": 1, "farm": 1}},
                 "engineState": {"1": {"last_tick": datetime.now(UTC).isoformat()}},
+                "factions": {
+                    "1": {"id": 1, "name": "Player", "is_player": True},
+                    "2": {"id": 2, "name": "Empire North", "is_player": False},
+                    "3": {"id": 3, "name": "Guild East", "is_player": False},
+                },
+                "relations": {
+                    "1_2": {"a": 1, "b": 2, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC).isoformat()},
+                    "1_3": {"a": 1, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC).isoformat()},
+                    "2_3": {"a": 2, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC).isoformat()},
+                },
+                "treaties": {},
+                "diplomacyEvents": [],
             }
             self.storage_path.write_text(json.dumps(default_world, indent=2))
 
@@ -188,3 +207,61 @@ class FileStorageEngine:
                 }
             if vid not in self.engine_state:
                 self.engine_state[vid] = {"last_tick": datetime.now(UTC)}
+
+    def _load_diplomacy_state(self) -> None:
+        """Load A8 diplomacy state (factions, relations, treaties, events) from JSON."""
+        data = json.loads(self.storage_path.read_text())
+
+        # Load factions
+        factions_data = data.get("factions", {})
+        for fid_str, faction in factions_data.items():
+            self.factions[int(fid_str)] = faction
+
+        # Load relations
+        relations_data = data.get("relations", {})
+        for key, rel in relations_data.items():
+            # Parse last_updated
+            if "last_updated" in rel and isinstance(rel["last_updated"], str):
+                last_updated = datetime.fromisoformat(rel["last_updated"])
+                if last_updated.tzinfo is None:
+                    last_updated = last_updated.replace(tzinfo=UTC)
+                rel["last_updated"] = last_updated
+            self.relations[key] = rel
+
+        # Load treaties
+        treaties_data = data.get("treaties", {})
+        for tid_str, treaty in treaties_data.items():
+            tid = int(tid_str)
+            # Parse timestamps
+            if "started_at" in treaty and isinstance(treaty["started_at"], str):
+                treaty["started_at"] = datetime.fromisoformat(treaty["started_at"])
+            if "expires_at" in treaty and isinstance(treaty["expires_at"], str):
+                treaty["expires_at"] = datetime.fromisoformat(treaty["expires_at"])
+            self.treaties[tid] = treaty
+            if tid >= self._next_treaty_id:
+                self._next_treaty_id = tid + 1
+
+        # Load events
+        events_data = data.get("diplomacyEvents", [])
+        for event in events_data:
+            # Parse timestamp
+            if "ts" in event and isinstance(event["ts"], str):
+                event["ts"] = datetime.fromisoformat(event["ts"])
+            self.diplomacy_events.append(event)
+
+        # Initialize default factions if missing
+        if not self.factions:
+            self.factions = {
+                1: {"id": 1, "name": "Player", "is_player": True},
+                2: {"id": 2, "name": "Empire North", "is_player": False},
+                3: {"id": 3, "name": "Guild East", "is_player": False},
+            }
+
+        # Initialize default relations if missing
+        if not self.relations:
+            now_iso = datetime.now(UTC).isoformat()
+            self.relations = {
+                "1_2": {"a": 1, "b": 2, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": now_iso},
+                "1_3": {"a": 1, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": now_iso},
+                "2_3": {"a": 2, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": now_iso},
+            }

@@ -13,6 +13,20 @@ class MemoryEngine:
             1: {"lumber_mill": 1, "clay_pit": 1, "iron_mine": 1, "farm": 1}
         }
         self.engine_state: dict[int, dict[str, datetime]] = {1: {"last_tick": datetime.now(UTC)}}
+        # A8 diplomacy persistence
+        self.factions: dict[int, dict] = {
+            1: {"id": 1, "name": "Player", "is_player": True},
+            2: {"id": 2, "name": "Empire North", "is_player": False},
+            3: {"id": 3, "name": "Guild East", "is_player": False},
+        }
+        self.relations: dict[str, dict] = {
+            "1_2": {"a": 1, "b": 2, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC)},
+            "1_3": {"a": 1, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC)},
+            "2_3": {"a": 2, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC)},
+        }
+        self.treaties: dict[int, dict] = {}  # treaty_id -> treaty
+        self.diplomacy_events: list[dict] = []  # event log
+        self._next_treaty_id: int = 1
 
     def snapshot(self) -> list[Village]:
         return list(self.world.values())

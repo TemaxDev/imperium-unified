@@ -2,8 +2,6 @@
 
 from datetime import UTC, datetime, timedelta
 
-import os
-
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -124,7 +122,7 @@ async def test_suggest_deterministic_ordering(client):
     # Verify identical ordering
     assert len(suggestions1) == len(suggestions2), "Should return same number of suggestions"
 
-    for i, (s1, s2) in enumerate(zip(suggestions1, suggestions2)):
+    for i, (s1, s2) in enumerate(zip(suggestions1, suggestions2, strict=True)):
         assert s1["type"] == s2["type"], f"Suggestion {i}: type differs"
         assert s1["score"] == s2["score"], f"Suggestion {i}: score differs"
 

@@ -143,7 +143,7 @@ def test_deterministic_ordering_same_state(store, proposer):
 
     # Verify identical ordering
     assert len(suggestions1) == len(suggestions2), "Should return same number of suggestions"
-    for i, (s1, s2) in enumerate(zip(suggestions1, suggestions2)):
+    for i, (s1, s2) in enumerate(zip(suggestions1, suggestions2, strict=True)):
         assert s1.type == s2.type, f"Suggestion {i}: type mismatch {s1.type} vs {s2.type}"
         assert s1.score == s2.score, f"Suggestion {i}: score mismatch {s1.score} vs {s2.score}"
 

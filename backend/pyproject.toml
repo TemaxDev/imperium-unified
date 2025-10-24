@@ -58,6 +58,7 @@ ignore = []
 "tests/**/*.py" = ["S101", "F841"]  # Allow unused vars in tests
 "src/ager/models.py" = ["N815"]  # Allow camelCase for API DTOs (JSON contract)
 "src/ager/app_gameplay.py" = ["B008"]  # Allow Depends() in FastAPI function defaults
+"src/ager/ai_diplomacy/api.py" = ["B008"]  # Allow Depends() in FastAPI function defaults
 
 [tool.black]
 line-length = 100

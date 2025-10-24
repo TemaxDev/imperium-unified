@@ -3,6 +3,7 @@ import sys
 from fastapi import FastAPI, HTTPException
 
 from . import __version__
+from .ai_diplomacy.api import router as diplomacy_router
 from .app_gameplay import router as gameplay_router
 from .container import get_engine
 from .models import BuildCmd, Village
@@ -11,6 +12,9 @@ app = FastAPI(title="Imperium Backend", version=__version__)
 
 # Include gameplay routes (A7)
 app.include_router(gameplay_router)
+
+# Include diplomacy routes (A8)
+app.include_router(diplomacy_router)
 
 
 @app.get("/health")

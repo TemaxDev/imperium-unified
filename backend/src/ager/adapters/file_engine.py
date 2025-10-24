@@ -61,9 +61,27 @@ class FileStorageEngine:
                     "3": {"id": 3, "name": "Guild East", "is_player": False},
                 },
                 "relations": {
-                    "1_2": {"a": 1, "b": 2, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC).isoformat()},
-                    "1_3": {"a": 1, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC).isoformat()},
-                    "2_3": {"a": 2, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC).isoformat()},
+                    "1_2": {
+                        "a": 1,
+                        "b": 2,
+                        "stance": "NEUTRAL",
+                        "opinion": 0.0,
+                        "last_updated": datetime.now(UTC).isoformat(),
+                    },
+                    "1_3": {
+                        "a": 1,
+                        "b": 3,
+                        "stance": "NEUTRAL",
+                        "opinion": 0.0,
+                        "last_updated": datetime.now(UTC).isoformat(),
+                    },
+                    "2_3": {
+                        "a": 2,
+                        "b": 3,
+                        "stance": "NEUTRAL",
+                        "opinion": 0.0,
+                        "last_updated": datetime.now(UTC).isoformat(),
+                    },
                 },
                 "treaties": {},
                 "diplomacyEvents": [],
@@ -261,7 +279,25 @@ class FileStorageEngine:
         if not self.relations:
             now_iso = datetime.now(UTC).isoformat()
             self.relations = {
-                "1_2": {"a": 1, "b": 2, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": now_iso},
-                "1_3": {"a": 1, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": now_iso},
-                "2_3": {"a": 2, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": now_iso},
+                "1_2": {
+                    "a": 1,
+                    "b": 2,
+                    "stance": "NEUTRAL",
+                    "opinion": 0.0,
+                    "last_updated": now_iso,
+                },
+                "1_3": {
+                    "a": 1,
+                    "b": 3,
+                    "stance": "NEUTRAL",
+                    "opinion": 0.0,
+                    "last_updated": now_iso,
+                },
+                "2_3": {
+                    "a": 2,
+                    "b": 3,
+                    "stance": "NEUTRAL",
+                    "opinion": 0.0,
+                    "last_updated": now_iso,
+                },
             }

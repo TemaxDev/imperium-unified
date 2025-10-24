@@ -20,9 +20,27 @@ class MemoryEngine:
             3: {"id": 3, "name": "Guild East", "is_player": False},
         }
         self.relations: dict[str, dict] = {
-            "1_2": {"a": 1, "b": 2, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC)},
-            "1_3": {"a": 1, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC)},
-            "2_3": {"a": 2, "b": 3, "stance": "NEUTRAL", "opinion": 0.0, "last_updated": datetime.now(UTC)},
+            "1_2": {
+                "a": 1,
+                "b": 2,
+                "stance": "NEUTRAL",
+                "opinion": 0.0,
+                "last_updated": datetime.now(UTC),
+            },
+            "1_3": {
+                "a": 1,
+                "b": 3,
+                "stance": "NEUTRAL",
+                "opinion": 0.0,
+                "last_updated": datetime.now(UTC),
+            },
+            "2_3": {
+                "a": 2,
+                "b": 3,
+                "stance": "NEUTRAL",
+                "opinion": 0.0,
+                "last_updated": datetime.now(UTC),
+            },
         }
         self.treaties: dict[int, dict] = {}  # treaty_id -> treaty
         self.diplomacy_events: list[dict] = []  # event log

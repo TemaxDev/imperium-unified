@@ -382,14 +382,14 @@ class SQLDiploStore:
     def list_factions(self) -> list[Faction]:
         from ...db.models import Faction as FactionORM
 
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             factions = session.query(FactionORM).all()
             return [Faction(id=f.id, name=f.name, is_player=bool(f.is_player)) for f in factions]
 
     def get_faction(self, faction_id: int) -> Faction | None:
         from ...db.models import Faction as FactionORM
 
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             f = session.get(FactionORM, faction_id)
             if not f:
                 return None
@@ -399,7 +399,7 @@ class SQLDiploStore:
         from ...db.models import Relation as RelationORM
 
         a, b = normalize_pair(a, b)
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             rel = session.get(RelationORM, (a, b))
             if not rel:
                 return None
@@ -415,7 +415,7 @@ class SQLDiploStore:
         from ...db.models import Relation as RelationORM
 
         a, b = normalize_pair(a, b)
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             rel = session.get(RelationORM, (a, b))
             if rel:
                 rel.stance = stance
@@ -431,7 +431,7 @@ class SQLDiploStore:
     def list_relations(self) -> list[Relation]:
         from ...db.models import Relation as RelationORM
 
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             relations = session.query(RelationORM).all()
             return [
                 Relation(
@@ -447,7 +447,7 @@ class SQLDiploStore:
     def list_treaties(self) -> list[Treaty]:
         from ...db.models import Treaty as TreatyORM
 
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             treaties = session.query(TreatyORM).all()
             return [
                 Treaty(
@@ -465,7 +465,7 @@ class SQLDiploStore:
     def get_treaty(self, treaty_id: int) -> Treaty | None:
         from ...db.models import Treaty as TreatyORM
 
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             t = session.get(TreatyORM, treaty_id)
             if not t:
                 return None
@@ -490,7 +490,7 @@ class SQLDiploStore:
         from ...db.models import Treaty as TreatyORM
 
         a, b = normalize_pair(a, b)
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             treaty = TreatyORM(
                 a=a,
                 b=b,
@@ -507,7 +507,7 @@ class SQLDiploStore:
     def update_treaty_status(self, treaty_id: int, status: TreatyStatus) -> None:
         from ...db.models import Treaty as TreatyORM
 
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             treaty = session.get(TreatyORM, treaty_id)
             if treaty:
                 treaty.status = status
@@ -516,7 +516,7 @@ class SQLDiploStore:
     def log_event(self, kind: str, payload: dict, ts: datetime) -> None:
         from ...db.models import DiplomacyEvent as EventORM
 
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             event = EventORM(kind=kind, payload=json.dumps(payload), ts=ts.isoformat())
             session.add(event)
             session.commit()
@@ -526,16 +526,16 @@ class SQLDiploStore:
     ) -> list[DiplomacyEvent]:
         from ...db.models import DiplomacyEvent as EventORM
 
-        with self.engine.session() as session:
+        with self.engine.session() as session:  # type: ignore[attr-defined]
             query = session.query(EventORM)
             if since:
                 query = query.filter(EventORM.ts >= since.isoformat())
             if limit:
-                query = query.order_by(EventORM.id.desc()).limit(limit)
+                query = query.order_by(EventORM.id.desc()).limit(limit)  # type: ignore[union-attr]
             events = query.all()
             return [
                 DiplomacyEvent(
-                    id=e.id,  # type: ignore[arg-type]
+                    id=e.id,
                     kind=e.kind,
                     payload=json.loads(e.payload),
                     ts=e.ts,

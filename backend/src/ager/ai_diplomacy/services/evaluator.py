@@ -58,7 +58,7 @@ class Evaluator:
                 and treaty.expires_at
                 and datetime.fromisoformat(treaty.expires_at) <= now
             ):
-                self.store.update_treaty_status(treaty.id, "EXPIRED")  # type: ignore[arg-type]
+                self.store.update_treaty_status(treaty.id, "EXPIRED")
                 out["expired_treaties"].append(treaty.id)
                 self.store.log_event(
                     "treaty_expire",

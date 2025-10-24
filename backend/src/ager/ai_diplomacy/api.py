@@ -1,7 +1,7 @@
 """FastAPI router for AI Diplomacy internal endpoints (A8)."""
 
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter, Depends, Query
 
@@ -57,7 +57,7 @@ def diplo_tick(
     # Convert tuples to lists for JSON serialization
     result["updated_relations"] = [list(r) for r in result["updated_relations"]]
 
-    return result
+    return cast(dict[str, Any], result)
 
 
 @router.get("/suggest")
@@ -120,7 +120,7 @@ def diplo_propose(
 
     now = datetime.now(UTC)
 
-    return treaty_service.propose(a, b, treaty_type, now, duration_h)
+    return cast(dict[str, Any], treaty_service.propose(a, b, treaty_type, now, duration_h))
 
 
 @router.get("/rules")

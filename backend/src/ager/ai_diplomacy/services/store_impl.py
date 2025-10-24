@@ -6,7 +6,7 @@ from typing import Any
 
 from ...adapters.file_engine import FileStorageEngine
 from ...adapters.memory_engine import MemoryEngine
-from ...db.engine import SQLiteEngine
+from ...adapters.sql_engine import SQLiteEngine
 from ..dtos import DiplomacyEvent, Faction, Relation, Treaty, TreatyStatus, TreatyType
 from .store import normalize_pair
 
